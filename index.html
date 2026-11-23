@@ -80,6 +80,10 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .status{font-size:14px;color:var(--ink2);margin-top:12px;min-height:1.5em}
 .bar{height:6px;background:#f0e9ff;border-radius:99px;overflow:hidden;margin-top:6px}
 .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--coral));transition:width .2s}
+.camBox{position:fixed;inset:0;z-index:50;background:#14122dcc;display:grid;place-items:center;padding:20px}
+.camIn{background:var(--white);border-radius:24px;padding:16px;max-width:760px;width:100%}
+.camIn video{display:block;width:100%;max-height:70vh;border-radius:14px;background:#000;object-fit:contain}
+.camBtns{display:flex;gap:12px;justify-content:center;margin-top:14px;flex-wrap:wrap}
 
 /* ---------- bagian bawah: gelap ---------- */
 .wave{display:block;width:100%;height:90px;margin-top:-90px;position:relative}
@@ -273,6 +277,15 @@ td:first-child{font-weight:800;width:3em;color:#ffc2d6}
   </div>
 </main>
 
+<div class="camBox" id="camBox" hidden role="dialog" aria-label="Kamera">
+  <div class="camIn">
+    <video id="vid" autoplay playsinline muted></video>
+    <div class="camBtns">
+      <button class="btn" id="jepret" type="button">Ambil foto</button>
+      <button class="btn alt" id="tutupCam" type="button">Batal</button>
+    </div>
+  </div>
+</div>
 <script src="ort.wasm.min.js"></script>
 <script>
 {
@@ -372,19 +385,48 @@ function draw() {
     : `<li class="none">Tidak ada simbol di atas ambang ${Math.round(thr * 100)}%. Coba foto lebih dekat, fokus, dan cahaya cukup, atau turunkan ambangnya.</li>`;
 }
 
-async function onFile(e) {
-  const f = e.target.files && e.target.files[0]; e.target.value = "";
-  if (!f || !session) return;
+async function proses(img) {
   setStatus("Membaca simbol…");
   try {
-    const img = await createImageBitmap(f, { imageOrientation: "from-image" });
     const t0 = performance.now();
     lastDets = await detect(img); lastImg = img;
     $("empty").hidden = true; $("cv").hidden = false; draw();
     setStatus(`Selesai dalam ${Math.round(performance.now() - t0)} ms.`);
   } catch (err) { setStatus("Gagal memproses gambar: " + err.message); console.error(err); }
 }
+async function onFile(e) {
+  const f = e.target.files && e.target.files[0]; e.target.value = "";
+  if (!f || !session) return;
+  try { await proses(await createImageBitmap(f, { imageOrientation: "from-image" })); }
+  catch (err) { setStatus("Gagal membuka gambar: " + err.message); }
+}
 $("cam").addEventListener("change", onFile); $("gal").addEventListener("change", onFile);
+
+/* kamera laptop (webcam). Di HP tetap pakai kamera bawaan */
+let stream = null;
+const pakaiWebcam = () => !matchMedia("(pointer:coarse)").matches && navigator.mediaDevices && navigator.mediaDevices.getUserMedia;
+async function bukaKamera() {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment", width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false });
+    $("vid").srcObject = stream; $("camBox").hidden = false;
+  } catch (err) {
+    setStatus("Kamera tidak bisa dibuka (" + err.name + "). Izinkan akses kamera di browser, atau pilih dari galeri.");
+  }
+}
+function tutupKamera() {
+  if (stream) stream.getTracks().forEach(t => t.stop());
+  stream = null; $("vid").srcObject = null; $("camBox").hidden = true;
+}
+$("camBtn").addEventListener("click", e => { if (pakaiWebcam()) { e.preventDefault(); bukaKamera(); } });
+$("jepret").addEventListener("click", async () => {
+  const v = $("vid"); if (!v.videoWidth) return;
+  const c = document.createElement("canvas"); c.width = v.videoWidth; c.height = v.videoHeight;
+  c.getContext("2d").drawImage(v, 0, 0);
+  tutupKamera();
+  await proses(await createImageBitmap(c));
+});
+$("tutupCam").addEventListener("click", tutupKamera);
+document.addEventListener("keydown", e => { if (e.key === "Escape") tutupKamera(); });
 $("thr").addEventListener("input", () => {
   const v = +$("thr").value;
   $("thrv").textContent = Math.round(v * 100) + "%";
