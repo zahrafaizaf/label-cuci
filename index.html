@@ -5,98 +5,272 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Baca Label Cuci</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-/* VOICE: practical, calm, like a helpful note sewn into a garment
-   IDEA: a woven care label — white satin tape with stitched edges, black print
-   PICTURE: the photo itself sits on the label tape, symbols boxed where they were found
-   COLOUR and TYPE: deep denim ground, label white, ink black, one signal orange; Barlow Condensed + Barlow
-   LAYOUT: title, then the label (picture + controls) as one column, results list below, reference table last */
-:root{color-scheme:light dark;--bg:light-dark(#1f3550,#0f1b2a);--tape:light-dark(#fbfaf6,#e9e6dd);--ink:#16181b;--mute:#5c6066;--on:#eef2f7;--on2:light-dark(#b9c7d8,#9fb0c4);--acc:#ff7a1a;--line:#d9d5ca}
-:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+:root{
+  color-scheme:light;
+  --navy:#1d1f4f; --ink2:#3a3d6e; --pink:#ff5c8a; --pink2:#ffd3e3; --coral:#ff8a4c;
+  --lav:#e9e0ff; --lav2:#c6b5f3; --mint:#3fc1a8; --sun:#ffc94d;
+  --dark1:#35306c; --dark2:#26244f; --white:#fffdfb;
+  --p:25%;
+}
 *{box-sizing:border-box;min-width:0}
-body{margin:0;background:var(--bg);color:var(--on);font:16px/1.55 Barlow,system-ui,sans-serif;overflow-x:clip}
-.band{padding:clamp(24px,4vw,56px) max(5vw,16px);max-width:980px;margin:0 auto}
-h1{font:700 clamp(36px,7vw,52px)/1.05 "Barlow Condensed",sans-serif;margin:0 0 6px;text-wrap:balance}
-.lead{color:var(--on2);margin:0 0 22px;max-width:60ch}
-.tape{background:var(--tape);color:var(--ink);border-radius:6px;padding:18px;position:relative;box-shadow:0 18px 40px -18px #000a}
-.tape::before,.tape::after{content:"";position:absolute;left:10px;right:10px;border-top:2px dashed #b9b3a4}
-.tape::before{top:7px}.tape::after{bottom:7px}
-.stage{position:relative;background:#f1efe8;border-radius:4px;min-height:300px;display:grid;place-items:center;overflow:hidden}
-.stage canvas{display:block;max-width:100%;height:auto}
-.empty{text-align:center;padding:28px 16px;color:var(--mute)}
-.empty svg{width:min(320px,80%);height:auto;margin-bottom:8px}
-.controls{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;align-items:center}
-.btn{font:600 16px Barlow,sans-serif;min-height:46px;padding:0 18px;border-radius:999px;border:2px solid var(--ink);background:var(--ink);color:#fff;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
-.btn.alt{background:transparent;color:var(--ink)}
-.btn:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{margin:0;font:16px/1.6 "Plus Jakarta Sans",system-ui,sans-serif;color:var(--navy);background:var(--dark2);overflow-x:clip}
+a{color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:max(5vw,18px)}
+
+/* ---------- bagian atas: gradasi pastel ---------- */
+.top{position:relative;isolation:isolate;overflow:hidden;
+  background:
+    radial-gradient(60% 55% at 0% 0%,#ffd9c4 0,transparent 70%),
+    radial-gradient(50% 50% at 55% 0%,#ffc6de 0,transparent 70%),
+    radial-gradient(45% 55% at 100% 10%,#bff1ea 0,transparent 70%),
+    radial-gradient(60% 60% at 80% 90%,#e3d3ff 0,transparent 70%),
+    #fde3ee}
+.blob{position:absolute;z-index:-1;pointer-events:none}
+.blob.b1{left:-120px;top:240px;width:360px}
+.blob.b2{right:-140px;top:-60px;width:420px}
+.blob.b3{left:-40px;bottom:-10px;width:680px}
+
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:22px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;text-decoration:none}
+.logo svg{width:38px;height:auto}
+nav{display:flex;gap:6px}
+nav a{text-decoration:none;font-weight:600;font-size:15px;padding:8px 16px;border-radius:999px}
+nav a:hover{background:#ffffff80}
+nav a.on{background:var(--pink2)}
+
+.hero{display:grid;grid-template-columns:1fr 1.08fr;gap:clamp(24px,4vw,56px);align-items:start;padding-block:18px 120px}
+.copy{position:relative}
+h1{font-weight:800;font-size:clamp(44px,6.4vw,78px);line-height:.98;letter-spacing:-.02em;margin:18px 0 18px}
+.burst{position:absolute;left:min(330px,62%);top:0;width:58px}
+.lead{color:var(--ink2);font-size:17px;max-width:40ch;margin:0}
+.squig{display:block;width:96px;margin:14px 0 0 150px}
+.tagart{display:block;width:210px;margin:6px 0 0 40px;filter:drop-shadow(0 14px 18px #c9638a33)}
+.spark{position:absolute;pointer-events:none}
+
+/* kartu foto */
+.card{position:relative;background:var(--white);border-radius:30px;padding:22px;
+  box-shadow:0 10px 0 #f7a8c8,0 30px 60px -20px #8a4d7a55;margin-top:8px}
+.stage{position:relative;background:#f4eeff;border:2px dashed var(--lav2);border-radius:20px;min-height:290px;display:grid;place-items:center;overflow:hidden}
+.stage canvas{display:block;max-width:100%;height:auto;border-radius:12px}
+.empty{text-align:center;padding:22px 16px}
+.empty svg{width:min(250px,80%);height:auto}
+.empty b{display:block;font-size:19px;margin-top:6px}
+.empty span{color:var(--ink2);font-size:15px}
+.controls{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}
+.btn{font:700 16px "Plus Jakarta Sans",sans-serif;min-height:52px;padding:0 24px;border-radius:999px;border:2px solid var(--navy);background:var(--navy);color:#fff;cursor:pointer;display:inline-flex;align-items:center;gap:10px;position:relative;transition:transform .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn.alt{background:#fff;color:var(--navy);border-color:var(--lav2)}
+.btn svg{width:22px;height:22px;flex:none}
+.btn:focus-within,input:focus-visible{outline:3px solid var(--pink);outline-offset:3px}
 .btn[aria-disabled=true]{opacity:.45;pointer-events:none}
 input[type=file]{position:absolute;width:1px;height:1px;opacity:0}
-.slider{display:flex;align-items:center;gap:10px;margin-inline-start:auto;font-size:14px;color:var(--mute)}
-.slider input{accent-color:var(--acc);width:130px;height:28px}
-.status{font-size:14px;color:var(--mute);margin-top:10px;min-height:1.5em}
-.bar{height:4px;background:#e2ded3;border-radius:2px;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;width:0;background:var(--acc);transition:width .2s}
-h2{font:700 28px/1.1 "Barlow Condensed",sans-serif;margin:34px 0 12px}
-.res{list-style:none;margin:0;padding:0;display:grid;gap:8px}
-.res li{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:12px;align-items:center;background:#ffffff10;border:1px solid #ffffff1f;border-radius:8px;padding:10px 12px}
-.num{width:44px;height:44px;border-radius:50%;background:var(--tape);color:var(--ink);display:grid;place-items:center;font:700 20px "Barlow Condensed",sans-serif}
-.res b{display:block;font-weight:600}.res span{color:var(--on2);font-size:15px}
-.conf{font:600 15px Barlow;color:var(--acc);white-space:nowrap;text-align:right}
-.none{color:var(--on2)}
+.slider{display:flex;align-items:center;gap:16px;margin-top:20px;font-weight:600;font-size:15px}
+.slider output{font-weight:700;min-width:3ch;text-align:right}
+input[type=range]{-webkit-appearance:none;appearance:none;flex:1;height:28px;background:transparent;margin:0;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:99px;background:linear-gradient(90deg,var(--coral) var(--p),#e6dcfb var(--p))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:#fff;border:4px solid var(--coral);margin-top:-9px;box-shadow:0 2px 6px #0002}
+input[type=range]::-moz-range-track{height:8px;border-radius:99px;background:#e6dcfb}
+input[type=range]::-moz-range-progress{height:8px;border-radius:99px;background:var(--coral)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#fff;border:4px solid var(--coral)}
+.status{font-size:14px;color:var(--ink2);margin-top:12px;min-height:1.5em}
+.bar{height:6px;background:#f0e9ff;border-radius:99px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--coral));transition:width .2s}
+
+/* ---------- bagian bawah: gelap ---------- */
+.wave{display:block;width:100%;height:90px;margin-top:-90px;position:relative}
+.dark{position:relative;overflow:hidden;color:#fff;background:linear-gradient(180deg,var(--dark1),var(--dark2));padding-bottom:70px}
+.dark .wrap{max-width:900px;position:relative;z-index:1}
+h2{display:flex;align-items:center;gap:12px;font-weight:800;font-size:clamp(26px,3.4vw,34px);line-height:1.15;margin:44px 0 16px}
+h2 svg{width:30px;height:30px;flex:none}
+.res{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.res li{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:14px;align-items:center;background:#ffffff16;border:1px solid #ffffff30;border-radius:18px;padding:12px 16px}
+.res li.none{display:flex;justify-content:space-between;gap:16px;color:#e4e1ff;padding:16px 22px}
+.res li.none svg{width:42px;flex:none}
+.num{width:46px;height:46px;border-radius:50%;background:var(--pink2);color:var(--navy);display:grid;place-items:center;font-weight:800;font-size:18px}
+.res b{display:block;font-weight:700}
+.res b + span{color:#d2cff5;font-size:15px}
+.conf{font-weight:700;font-size:15px;color:#ffb98c;white-space:nowrap;text-align:right}
+details summary{list-style:none;cursor:pointer;font-weight:700;display:inline-flex;align-items:center;gap:12px;min-height:44px;margin-left:42px}
+details summary::-webkit-details-marker{display:none}
+details summary u{text-decoration-thickness:2px;text-underline-offset:6px}
+details summary svg{width:24px;transition:transform .2s}
+details[open] summary svg{transform:rotate(90deg)}
+.tablebox{margin-top:14px;background:#ffffff10;border:1px solid #ffffff26;border-radius:18px;padding:8px 16px}
 table{width:100%;border-collapse:collapse;font-size:15px}
-th,td{text-align:left;padding:7px 8px;border-bottom:1px solid #ffffff22;vertical-align:top}
-th{color:var(--on2);font-weight:500}
-td:first-child{font:700 18px "Barlow Condensed";width:3em}
-details summary{cursor:pointer;font-weight:600;min-height:44px;display:flex;align-items:center}
-.note{font-size:14px;color:var(--on2);margin-top:22px}
-.note a{color:var(--on)}
-@media(max-width:600px){.slider{margin-inline-start:0;width:100%}.slider input{flex:1}table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:8em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:7.5em;margin-inline-start:-8em;white-space:normal;color:var(--on2);font:500 13px Barlow}.stack td:empty{display:none}}
-@media(prefers-reduced-motion:reduce){.bar i{transition:none}}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid #ffffff1c;vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{color:#c9c6f0;font-weight:600}
+td:first-child{font-weight:800;width:3em;color:#ffc2d6}
+.note{display:flex;gap:14px;align-items:flex-start;margin-top:48px;font-size:14px;color:#e4e1ff;background:#ffffff12;border:1px solid #ffffff30;border-radius:18px;padding:16px 20px}
+.note svg{width:24px;flex:none;margin-top:1px}
+.deco{position:absolute;pointer-events:none;z-index:0}
+.deco.mesin{right:-50px;bottom:-30px;width:250px}
+.deco.daun{left:-30px;bottom:-20px;width:190px}
+.deco.bintang{right:12%;top:120px;width:52px}
+
+@media(max-width:1180px){.deco.mesin,.deco.daun,.deco.bintang{display:none}}
+@media(max-width:860px){
+  .hero{grid-template-columns:1fr;padding-bottom:110px}
+  .copy h1,.copy .lead{padding-right:130px}
+  .tagart{position:absolute;right:0;top:6px;width:112px;margin:0}
+  .squig{margin-left:0}
+  .burst{display:none}
+}
+@media(max-width:640px){
+  nav{display:none}
+  h1{font-size:42px;margin-top:6px}
+  .copy h1{padding-right:84px}.copy .lead{padding-right:64px}
+  .tagart{width:74px;top:-4px}
+  .lead{font-size:15.5px}
+  .card{padding:14px;border-radius:24px}
+  .stage{min-height:240px}
+  .btn{flex:1 1 100%;justify-content:center;padding:0 14px}
+  details summary{margin-left:0}
+  table{font-size:13px}
+  .stack thead{display:none}
+  .stack tr{display:grid;grid-template-columns:2.6em 1fr;padding-block:10px;border-bottom:1px solid #ffffff1c}
+  .stack tr:last-child{border-bottom:0}
+  .stack td{border:0;padding:0 4px}
+  .stack td:first-child{grid-row:span 2;width:auto}
+  .stack td:nth-child(2){font-weight:700}
+  .stack td:nth-child(3){color:#d2cff5}
+}
+@media(prefers-reduced-motion:reduce){.bar i,.btn,details summary svg{transition:none}html{scroll-behavior:auto}}
 </style>
 </head>
 <body>
-<main class="band">
-  <h1>Baca Label Cuci</h1>
-  <p class="lead">Foto label perawatan di baju, nanti simbolnya ditandai dan dijelaskan cara mencucinya. Model YOLO11n berjalan langsung di HP kamu, fotonya tidak diunggah ke mana pun.</p>
 
-  <section class="tape" aria-label="Area foto label">
-    <div class="stage" id="stage">
-      <div class="empty" id="empty">
-        <svg viewBox="0 0 320 90" aria-hidden="true" fill="none" stroke="#16181b" stroke-width="3" stroke-linejoin="round">
-          <path d="M12 22h56l-7 46H19z"/><path d="M12 30q7-6 14 0t14 0 14 0 14 0"/><text x="40" y="58" font-size="20" font-family="Barlow" font-weight="600" fill="#16181b" stroke="none" text-anchor="middle">30</text>
-          <path d="M98 70l30-50 30 50z"/><path d="M92 26l72 48M164 26l-72 48"/>
-          <path d="M190 68V46q0-22 28-22h22v44z"/><circle cx="222" cy="56" r="3.5" fill="#16181b"/>
-          <rect x="262" y="20" width="48" height="50"/><path d="M262 26l48 38M310 26l-48 38"/>
+<div class="top" id="beranda">
+  <!-- latar gelombang -->
+  <svg class="blob b1" viewBox="0 0 300 300" aria-hidden="true"><path fill="#ffb3a7" opacity=".55" d="M150 20c60 0 120 50 120 120s-40 140-120 140S20 230 30 150 90 20 150 20z"/></svg>
+  <svg class="blob b2" viewBox="0 0 400 300" aria-hidden="true"><path fill="#a9ece2" opacity=".6" d="M60 40c80-40 200-30 290 20s40 200-60 220S80 240 40 180 -20 80 60 40z"/></svg>
+  <svg class="blob b3" viewBox="0 0 680 220" preserveAspectRatio="none" aria-hidden="true"><path fill="#47c6b0" opacity=".75" d="M0 60c90-40 170 30 250 20s140-60 220-30c90 30 160 90 210 170H0z"/><path fill="#2fae98" opacity=".6" d="M0 120c80-20 150 40 240 30s160-50 250-20c80 25 140 60 190 90H0z"/></svg>
+
+  <div class="wrap">
+    <header>
+      <a class="logo" href="#beranda">
+        <svg viewBox="0 0 48 36" aria-hidden="true" fill="none" stroke="#1d1f4f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"><path d="M4 6h40l-5 26H9z" fill="#fff"/><path d="M7 18q4-4 8 0t8 0 8 0 8 0 6 0" stroke="#ff5c8a"/><path d="M5 10q4-4 9 0t9 0 9 0 9 0"/></svg>
+        Baca Label Cuci
+      </a>
+      <nav aria-label="Menu">
+        <a class="on" href="#beranda">Beranda</a>
+        <a href="#simbol">Daftar Simbol</a>
+        <a href="#tentang">Tentang</a>
+      </nav>
+    </header>
+
+    <div class="hero">
+      <div class="copy">
+        <svg class="burst" viewBox="0 0 60 50" aria-hidden="true" fill="none" stroke="#ff8a4c" stroke-width="4" stroke-linecap="round"><path d="M10 40 4 28M26 30l2-24M42 38l14-16"/></svg>
+        <h1>Baca<br>Label Cuci</h1>
+        <p class="lead">Foto label perawatan di baju, nanti simbolnya ditandai dan dijelaskan cara mencucinya. Model YOLO11n berjalan langsung di HP kamu, fotonya tidak diunggah ke mana pun.</p>
+        <svg class="squig" viewBox="0 0 100 16" aria-hidden="true" fill="none" stroke="#ff7a5c" stroke-width="4" stroke-linecap="round"><path d="M4 10q8-8 16 0t16 0 16 0 16 0 16 0 12 0"/></svg>
+
+        <!-- label baju dengan simbol -->
+        <svg class="tagart" viewBox="0 0 200 310" aria-hidden="true">
+          <path d="M100 58V34a14 14 0 1 1 14-14" fill="none" stroke="#e2556f" stroke-width="6" stroke-linecap="round"/>
+          <g transform="rotate(-7 100 170)">
+            <path d="M58 70 100 52l42 18v212a12 12 0 0 1-12 12H70a12 12 0 0 1-12-12z" fill="#fffdf8" stroke="#1d1f4f" stroke-width="3.5" stroke-linejoin="round"/>
+            <circle cx="100" cy="72" r="7" fill="#ff8fab" stroke="#1d1f4f" stroke-width="3"/>
+            <g fill="none" stroke="#1d1f4f" stroke-width="4" stroke-linejoin="round" stroke-linecap="round">
+              <path d="M72 100h56l-7 36H79z"/><path d="M72 108q7-6 14 0t14 0 14 0 14 0"/>
+              <path d="M76 190l24-40 24 40z"/><path d="M73 152l54 38M127 152l-54 38"/>
+              <path d="M72 244h56v-12q0-18-18-18H94q-22 0-22 30z"/><path d="M90 214q2-9 12-9h14"/>
+              <rect x="74" y="256" width="52" height="30" rx="2"/><circle cx="100" cy="271" r="10"/><path d="M74 256l52 30M126 256l-52 30"/>
+            </g>
+            <text x="100" y="131" text-anchor="middle" font-family="Plus Jakarta Sans,sans-serif" font-weight="800" font-size="17" fill="#1d1f4f">30</text>
+            <circle cx="104" cy="234" r="3.5" fill="#1d1f4f"/>
+          </g>
+          <path transform="translate(150 130) scale(1.6)" fill="#ffc94d" d="M12 0c1 8 4 11 12 12-8 1-11 4-12 12-1-8-4-11-12-12 8-1 11-4 12-12z"/>
+          <path transform="translate(8 170) scale(1)" fill="#ffc94d" d="M12 0c1 8 4 11 12 12-8 1-11 4-12 12-1-8-4-11-12-12 8-1 11-4 12-12z"/>
         </svg>
-        <div>Belum ada foto. Dekatkan kamera ke label sampai simbolnya jelas.</div>
       </div>
-      <canvas id="cv" hidden></canvas>
+
+      <section class="card" aria-label="Area foto label">
+        <div class="stage" id="stage">
+          <div class="empty" id="empty">
+            <svg viewBox="0 0 260 160" aria-hidden="true">
+              <ellipse cx="140" cy="100" rx="112" ry="52" fill="#e3d6ff"/>
+              <g transform="rotate(10 185 70)">
+                <rect x="140" y="22" width="92" height="82" rx="8" fill="#fff" stroke="#1d1f4f" stroke-width="3"/>
+                <rect x="150" y="32" width="72" height="54" rx="4" fill="#c9d8ff"/>
+                <g fill="none" stroke="#1d1f4f" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"><path d="M160 48q6-5 12 0t12 0 12 0 12 0"/><path d="M160 56h48l-5 22h-38z"/></g>
+              </g>
+              <rect x="82" y="50" width="42" height="20" rx="6" fill="#1d1f4f"/>
+              <rect x="52" y="62" width="124" height="82" rx="18" fill="#ff8099" stroke="#1d1f4f" stroke-width="3"/>
+              <rect x="66" y="72" width="16" height="9" rx="3" fill="#fff"/>
+              <circle cx="116" cy="104" r="28" fill="#fff" stroke="#1d1f4f" stroke-width="3"/>
+              <circle cx="116" cy="104" r="17" fill="#1d1f4f"/><circle cx="110" cy="98" r="4.5" fill="#fff"/>
+              <path d="M30 44l12 10M22 70h15M52 22l5 14" stroke="#ff5c8a" stroke-width="4.5" stroke-linecap="round"/>
+            </svg>
+            <b>Belum ada foto.</b>
+            <span>Dekatkan kamera ke label sampai simbolnya jelas.</span>
+          </div>
+          <canvas id="cv" hidden></canvas>
+        </div>
+
+        <div class="controls">
+          <label class="btn" id="camBtn" aria-disabled="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 8h4l2-3h6l2 3h4v12H3z"/><circle cx="12" cy="13.5" r="3.8"/></svg>
+            Foto label
+            <input type="file" id="cam" accept="image/*" capture="environment">
+          </label>
+          <label class="btn alt" id="galBtn" aria-disabled="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="9.5" r="1.8"/><path d="M3 17l5-5 4 4 3-3 6 6"/></svg>
+            Pilih dari galeri
+            <input type="file" id="gal" accept="image/*">
+          </label>
+        </div>
+        <div class="slider"><label for="thr">Ambang yakin</label><input type="range" id="thr" min="0.1" max="0.9" step="0.05" value="0.3"><output id="thrv">30%</output></div>
+        <div class="status" id="status">Memuat model… (tombol aktif setelah selesai)</div>
+        <div class="bar"><i id="bar"></i></div>
+      </section>
     </div>
-    <div class="controls">
-      <label class="btn" id="camBtn" aria-disabled="true">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
-        Foto label
-        <input type="file" id="cam" accept="image/*" capture="environment">
-      </label>
-      <label class="btn alt" id="galBtn" aria-disabled="true">Pilih dari galeri
-        <input type="file" id="gal" accept="image/*">
-      </label>
-      <div class="slider"><label for="thr">Ambang yakin</label><input type="range" id="thr" min="0.1" max="0.9" step="0.05" value="0.3"><output id="thrv">30%</output></div>
-    </div>
-    <div class="status" id="status">Memuat model…</div>
-    <div class="bar"><i id="bar"></i></div>
-  </section>
+  </div>
+</div>
 
-  <h2>Hasil</h2>
-  <ul class="res" id="res"><li class="none" style="display:block">Hasil deteksi akan muncul di sini.</li></ul>
+<svg class="wave" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true"><path fill="#35306c" d="M0 60c160-50 300-40 460-10s300 40 480 0 340-60 500-20v60H0z"/></svg>
 
-  <h2>28 simbol yang dikenali</h2>
-  <details>
-    <summary>Lihat daftar lengkap</summary>
-    <table class="stack"><thead><tr><th>No</th><th>Simbol</th><th>Cara perawatan</th></tr></thead><tbody id="ref"></tbody></table>
-  </details>
+<main class="dark">
+  <svg class="deco bintang" viewBox="0 0 24 24" aria-hidden="true"><path fill="#ffc94d" d="M12 0c1 8 4 11 12 12-8 1-11 4-12 12-1-8-4-11-12-12 8-1 11-4 12-12z"/></svg>
+  <svg class="deco daun" viewBox="0 0 190 170" aria-hidden="true"><path fill="#3fb59a" d="M40 170C10 120 20 50 80 10c20 60 10 120-40 160z"/><path fill="#2c8f7c" d="M70 170c10-50 50-90 110-100-10 50-50 90-110 100z"/></svg>
+  <svg class="deco mesin" viewBox="0 0 230 250" aria-hidden="true">
+    <rect x="10" y="10" width="210" height="240" rx="26" fill="#ffd3e2"/>
+    <rect x="10" y="10" width="210" height="52" rx="26" fill="#ffbfd5"/>
+    <rect x="34" y="28" width="60" height="12" rx="6" fill="#ff6f9a"/>
+    <circle cx="170" cy="34" r="9" fill="#ff6f9a"/><circle cx="196" cy="34" r="9" fill="#ff6f9a"/>
+    <circle cx="115" cy="150" r="70" fill="#fff"/>
+    <circle cx="115" cy="150" r="56" fill="#6a5bd8"/>
+    <path fill="#8fd6ff" d="M60 160q14-12 28 0t28 0 28 0 28 0v10a56 56 0 0 1-112 0z"/>
+    <circle cx="95" cy="138" r="6" fill="#fff" opacity=".8"/><circle cx="130" cy="128" r="4" fill="#fff" opacity=".8"/><circle cx="140" cy="146" r="7" fill="#fff" opacity=".8"/>
+  </svg>
 
-  <p class="note">Tugas 10 EB4011 Pembelajaran Mesin Lanjut. Zahra Faiza Fithriah, 18323002. Model dilatih dari dataset foto label yang dikumpulkan teman-teman sekelas. Simbol yang jarang muncul di dataset (mis. 50–95°C, Do Not Steam) belum bisa dikenali dengan baik. Source code: <a href="notebook/Tugas10_DeteksiLabelCuci_YOLO11.ipynb">notebook Colab</a>.</p>
+  <div class="wrap">
+    <h2><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#ff8a4c" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"><path d="M3 7h18l-2.4 12.5a1.5 1.5 0 0 1-1.5 1.2H6.9a1.5 1.5 0 0 1-1.5-1.2z"/><path d="M5.5 12.5q2.1-2 4.2 0t4.2 0 4.2 0"/><circle cx="9" cy="3.8" r="1"/><circle cx="14" cy="3" r=".8"/></svg>Hasil</h2>
+    <ul class="res" id="res">
+      <li class="none"><span>Hasil deteksi akan muncul di sini.</span>
+        <svg viewBox="0 0 48 36" aria-hidden="true" fill="none" stroke="#fff" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"><path d="M4 8h40l-5 24H9z"/><path d="M6 14q4-4 9 0t9 0 9 0 9 0"/><circle cx="18" cy="4" r="2"/><circle cx="28" cy="3" r="1.6"/></svg>
+      </li>
+    </ul>
+
+    <h2 id="simbol"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#ff8fb0" stroke-width="2.2" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 12.5l10 5 10-5M2 17l10 5 10-5"/></svg>28 simbol yang dikenali</h2>
+    <details>
+      <summary><u>Lihat daftar lengkap</u><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#ff8a4c" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></summary>
+      <div class="tablebox">
+        <table class="stack"><thead><tr><th>No</th><th>Simbol</th><th>Cara perawatan</th></tr></thead><tbody id="ref"></tbody></table>
+      </div>
+    </details>
+
+    <p class="note" id="tentang">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 11v6"/><circle cx="12" cy="7.5" r=".6" fill="#fff"/></svg>
+      <span>Tugas 10 EB4011 Pembelajaran Mesin Lanjut. Zahra Faiza Fithriah - 18323002. Note: Simbol yang jarang muncul di dataset (Contoh: 50–95°C, Do Not Steam) belum bisa dikenali dengan baik. Source code: <a href="notebook/Tugas10_DeteksiLabelCuci_YOLO11.ipynb">notebook Colab</a>.</span>
+    </p>
+  </div>
 </main>
 
 <script src="ort.wasm.min.js"></script>
@@ -120,7 +294,7 @@ const KELAS = [
 const S = 640, NC = 28;
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-$("ref").innerHTML = KELAS.map((k, i) => `<tr><td>${i + 1}</td><td>${esc(k[0])}</td><td>${esc(k[1])}</td></tr>`).join("");
+$("ref").innerHTML = KELAS.map((k, i) => `<tr><td>${i + 1}</td><td data-l="Simbol">${esc(k[0])}</td><td data-l="Cara perawatan">${esc(k[1])}</td></tr>`).join("");
 
 let session = null, lastImg = null, lastDets = [];
 const setStatus = (t, p) => { $("status").textContent = t; if (p != null) $("bar").style.width = (p * 100) + "%"; };
@@ -130,7 +304,7 @@ async function fetchProgress(url, w0, w1) {
   const total = +r.headers.get("content-length") || 0;
   if (!r.body || !total) return new Uint8Array(await r.arrayBuffer());
   const rd = r.body.getReader(), parts = []; let got = 0;
-  for (;;) { const { done, value } = await rd.read(); if (done) break; parts.push(value); got += value.length; setStatus("Memuat model…", w0 + (w1 - w0) * got / total); }
+  for (;;) { const { done, value } = await rd.read(); if (done) break; parts.push(value); got += value.length; const f = w0 + (w1 - w0) * got / total; setStatus(`Memuat model… ${Math.round(f * 100)}% (tombol aktif setelah selesai)`, f); }
   const out = new Uint8Array(got); let o = 0; for (const p of parts) { out.set(p, o); o += p.length; } return out;
 }
 
@@ -144,7 +318,7 @@ async function init() {
     session = await ort.InferenceSession.create(model, { executionProviders: ["wasm"] });
     setStatus("Model siap. Ambil foto label.", 1);
     for (const b of ["camBtn", "galBtn"]) $(b).setAttribute("aria-disabled", "false");
-  } catch (e) { setStatus("Model gagal dimuat: " + e.message, 0); console.error(e); }
+  } catch (e) { setStatus("Model gagal dimuat, jadi tombolnya dikunci. Buka halaman ini lewat link GitHub Pages atau Live Server (bukan klik dua kali file-nya), dan pastikan best.onnx ada di folder yang sama.", 0); console.error(e); }
 }
 
 function iou(a, b) {
@@ -184,18 +358,18 @@ function draw() {
   g.drawImage(lastImg, 0, 0, cv.width, cv.height);
   const dets = lastDets.filter(d => d.s >= thr).sort((a, b) => a.x1 - b.x1);
   const lw = Math.max(3, cv.width / 220), fs = Math.max(16, cv.width / 34);
-  g.font = `700 ${fs}px "Barlow Condensed", sans-serif`; g.textBaseline = "top";
+  g.font = `800 ${fs}px "Plus Jakarta Sans", sans-serif`; g.textBaseline = "top";
   for (const d of dets) {
     const x = d.x1 * sc, y = d.y1 * sc, w = (d.x2 - d.x1) * sc, h = (d.y2 - d.y1) * sc;
-    g.strokeStyle = "#ff7a1a"; g.lineWidth = lw; g.strokeRect(x, y, w, h);
+    g.strokeStyle = "#ff5c8a"; g.lineWidth = lw; g.strokeRect(x, y, w, h);
     const lab = String(d.c + 1), tw = g.measureText(lab).width + fs * .5;
     const ty = y - fs * 1.15 < 0 ? y + h : y - fs * 1.15;
-    g.fillStyle = "#ff7a1a"; g.fillRect(x, ty, tw, fs * 1.15); g.fillStyle = "#16181b"; g.fillText(lab, x + fs * .25, ty + fs * .08);
+    g.fillStyle = "#ff5c8a"; g.fillRect(x, ty, tw, fs * 1.15); g.fillStyle = "#1d1f4f"; g.fillText(lab, x + fs * .25, ty + fs * .08);
   }
   const seen = new Map(); for (const d of dets) if (!seen.has(d.c) || seen.get(d.c).s < d.s) seen.set(d.c, d);
   const rows = [...seen.values()].sort((a, b) => a.x1 - b.x1);
   $("res").innerHTML = rows.length ? rows.map(d => `<li><div class="num">${d.c + 1}</div><div><b>${esc(KELAS[d.c][0])}</b><span>${esc(KELAS[d.c][1])}</span></div><div class="conf">${Math.round(d.s * 100)}%</div></li>`).join("")
-    : `<li class="none" style="display:block">Tidak ada simbol di atas ambang ${Math.round(thr * 100)}%. Coba foto lebih dekat, fokus, dan cahaya cukup, atau turunkan ambangnya.</li>`;
+    : `<li class="none">Tidak ada simbol di atas ambang ${Math.round(thr * 100)}%. Coba foto lebih dekat, fokus, dan cahaya cukup, atau turunkan ambangnya.</li>`;
 }
 
 async function onFile(e) {
@@ -211,7 +385,12 @@ async function onFile(e) {
   } catch (err) { setStatus("Gagal memproses gambar: " + err.message); console.error(err); }
 }
 $("cam").addEventListener("change", onFile); $("gal").addEventListener("change", onFile);
-$("thr").addEventListener("input", () => { $("thrv").textContent = Math.round($("thr").value * 100) + "%"; draw(); });
+$("thr").addEventListener("input", () => {
+  const v = +$("thr").value;
+  $("thrv").textContent = Math.round(v * 100) + "%";
+  $("thr").style.setProperty("--p", ((v - 0.1) / 0.8 * 100) + "%");
+  draw();
+});
 init();
 }
 </script>
