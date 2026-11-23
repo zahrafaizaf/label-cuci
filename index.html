@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Baca Label Cuci</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: practical, calm, like a helpful note sewn into a garment
+   IDEA: a woven care label — white satin tape with stitched edges, black print
+   PICTURE: the photo itself sits on the label tape, symbols boxed where they were found
+   COLOUR and TYPE: deep denim ground, label white, ink black, one signal orange; Barlow Condensed + Barlow
+   LAYOUT: title, then the label (picture + controls) as one column, results list below, reference table last */
+:root{color-scheme:light dark;--bg:light-dark(#1f3550,#0f1b2a);--tape:light-dark(#fbfaf6,#e9e6dd);--ink:#16181b;--mute:#5c6066;--on:#eef2f7;--on2:light-dark(#b9c7d8,#9fb0c4);--acc:#ff7a1a;--line:#d9d5ca}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--on);font:16px/1.55 Barlow,system-ui,sans-serif;overflow-x:clip}
+.band{padding:clamp(24px,4vw,56px) max(5vw,16px);max-width:980px;margin:0 auto}
+h1{font:700 clamp(36px,7vw,52px)/1.05 "Barlow Condensed",sans-serif;margin:0 0 6px;text-wrap:balance}
+.lead{color:var(--on2);margin:0 0 22px;max-width:60ch}
+.tape{background:var(--tape);color:var(--ink);border-radius:6px;padding:18px;position:relative;box-shadow:0 18px 40px -18px #000a}
+.tape::before,.tape::after{content:"";position:absolute;left:10px;right:10px;border-top:2px dashed #b9b3a4}
+.tape::before{top:7px}.tape::after{bottom:7px}
+.stage{position:relative;background:#f1efe8;border-radius:4px;min-height:300px;display:grid;place-items:center;overflow:hidden}
+.stage canvas{display:block;max-width:100%;height:auto}
+.empty{text-align:center;padding:28px 16px;color:var(--mute)}
+.empty svg{width:min(320px,80%);height:auto;margin-bottom:8px}
+.controls{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;align-items:center}
+.btn{font:600 16px Barlow,sans-serif;min-height:46px;padding:0 18px;border-radius:999px;border:2px solid var(--ink);background:var(--ink);color:#fff;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.btn.alt{background:transparent;color:var(--ink)}
+.btn:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.btn[aria-disabled=true]{opacity:.45;pointer-events:none}
+input[type=file]{position:absolute;width:1px;height:1px;opacity:0}
+.slider{display:flex;align-items:center;gap:10px;margin-inline-start:auto;font-size:14px;color:var(--mute)}
+.slider input{accent-color:var(--acc);width:130px;height:28px}
+.status{font-size:14px;color:var(--mute);margin-top:10px;min-height:1.5em}
+.bar{height:4px;background:#e2ded3;border-radius:2px;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;width:0;background:var(--acc);transition:width .2s}
+h2{font:700 28px/1.1 "Barlow Condensed",sans-serif;margin:34px 0 12px}
+.res{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.res li{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:12px;align-items:center;background:#ffffff10;border:1px solid #ffffff1f;border-radius:8px;padding:10px 12px}
+.num{width:44px;height:44px;border-radius:50%;background:var(--tape);color:var(--ink);display:grid;place-items:center;font:700 20px "Barlow Condensed",sans-serif}
+.res b{display:block;font-weight:600}.res span{color:var(--on2);font-size:15px}
+.conf{font:600 15px Barlow;color:var(--acc);white-space:nowrap;text-align:right}
+.none{color:var(--on2)}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid #ffffff22;vertical-align:top}
+th{color:var(--on2);font-weight:500}
+td:first-child{font:700 18px "Barlow Condensed";width:3em}
+details summary{cursor:pointer;font-weight:600;min-height:44px;display:flex;align-items:center}
+.note{font-size:14px;color:var(--on2);margin-top:22px}
+.note a{color:var(--on)}
+@media(max-width:600px){.slider{margin-inline-start:0;width:100%}.slider input{flex:1}table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:8em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:7.5em;margin-inline-start:-8em;white-space:normal;color:var(--on2);font:500 13px Barlow}.stack td:empty{display:none}}
+@media(prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+</head>
+<body>
+<main class="band">
+  <h1>Baca Label Cuci</h1>
+  <p class="lead">Foto label perawatan di baju, nanti simbolnya ditandai dan dijelaskan cara mencucinya. Model YOLO11n berjalan langsung di HP kamu, fotonya tidak diunggah ke mana pun.</p>
+
+  <section class="tape" aria-label="Area foto label">
+    <div class="stage" id="stage">
+      <div class="empty" id="empty">
+        <svg viewBox="0 0 320 90" aria-hidden="true" fill="none" stroke="#16181b" stroke-width="3" stroke-linejoin="round">
+          <path d="M12 22h56l-7 46H19z"/><path d="M12 30q7-6 14 0t14 0 14 0 14 0"/><text x="40" y="58" font-size="20" font-family="Barlow" font-weight="600" fill="#16181b" stroke="none" text-anchor="middle">30</text>
+          <path d="M98 70l30-50 30 50z"/><path d="M92 26l72 48M164 26l-72 48"/>
+          <path d="M190 68V46q0-22 28-22h22v44z"/><circle cx="222" cy="56" r="3.5" fill="#16181b"/>
+          <rect x="262" y="20" width="48" height="50"/><path d="M262 26l48 38M310 26l-48 38"/>
+        </svg>
+        <div>Belum ada foto. Dekatkan kamera ke label sampai simbolnya jelas.</div>
+      </div>
+      <canvas id="cv" hidden></canvas>
+    </div>
+    <div class="controls">
+      <label class="btn" id="camBtn" aria-disabled="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+        Foto label
+        <input type="file" id="cam" accept="image/*" capture="environment">
+      </label>
+      <label class="btn alt" id="galBtn" aria-disabled="true">Pilih dari galeri
+        <input type="file" id="gal" accept="image/*">
+      </label>
+      <div class="slider"><label for="thr">Ambang yakin</label><input type="range" id="thr" min="0.1" max="0.9" step="0.05" value="0.3"><output id="thrv">30%</output></div>
+    </div>
+    <div class="status" id="status">Memuat model…</div>
+    <div class="bar"><i id="bar"></i></div>
+  </section>
+
+  <h2>Hasil</h2>
+  <ul class="res" id="res"><li class="none" style="display:block">Hasil deteksi akan muncul di sini.</li></ul>
+
+  <h2>28 simbol yang dikenali</h2>
+  <details>
+    <summary>Lihat daftar lengkap</summary>
+    <table class="stack"><thead><tr><th>No</th><th>Simbol</th><th>Cara perawatan</th></tr></thead><tbody id="ref"></tbody></table>
+  </details>
+
+  <p class="note">Tugas 10 EB4011 Pembelajaran Mesin Lanjut. Zahra Faiza Fithriah, 18323002. Model dilatih dari dataset foto label yang dikumpulkan teman-teman sekelas. Simbol yang jarang muncul di dataset (mis. 50–95°C, Do Not Steam) belum bisa dikenali dengan baik. Source code: <a href="notebook/Tugas10_DeteksiLabelCuci_YOLO11.ipynb">notebook Colab</a>.</p>
+</main>
+
+<script src="ort.wasm.min.js"></script>
+<script>
+{
+const KELAS = [
+ ["Hand Wash","Hanya boleh dicuci dengan tangan"],["Do Not Wash","Tidak boleh dicuci"],
+ ["Machine Wash","Boleh dicuci dengan mesin cuci"],["Machine Wash, Permanent Press","Mesin cuci, siklus permanent press"],
+ ["Machine Wash, Gentle or Delicate","Mesin cuci, mode gentle/delicate"],["Water Temperature 30°C","Cuci dengan air suhu 30°C"],
+ ["Water Temperature 40°C","Cuci dengan air suhu 40°C"],["Water Temperature 50°C","Cuci dengan air suhu 50°C"],
+ ["Water Temperature 60°C","Cuci dengan air suhu 60°C"],["Water Temperature 70°C","Cuci dengan air suhu 70°C"],
+ ["Water Temperature 95°C","Cuci dengan air suhu 95°C"],["Cold Water Temperature","Cuci dengan air dingin"],
+ ["Warm Water Temperature","Cuci dengan air hangat"],["Hot Water Temperature","Cuci dengan air panas"],
+ ["Bleach If Needed","Boleh pakai pemutih"],["Do Not Bleach","Tidak boleh pakai pemutih"],
+ ["Non-Chlorine Bleach If Needed","Boleh pakai pemutih non-klorin"],["Iron. Steam","Boleh disetrika & steam, suhu berapa pun"],
+ ["Do Not Iron","Tidak boleh disetrika"],["Iron With Max Temperature 110°C","Setrika suhu maks. 110°C"],
+ ["Iron With Max Temperature 180°C","Setrika suhu maks. 150°C"],["Iron With Max Temperature 200°C","Setrika suhu maks. 200°C"],
+ ["Do Not Steam","Tidak boleh disetrika dengan setrika uap"],["Dry","Boleh dijemur"],
+ ["Do Not Wring","Tidak boleh diperas"],["Do Not Dry","Tidak boleh dikeringkan dengan mesin"],
+ ["Dry Flat","Keringkan dengan cara dibentangkan datar"],["Dry in Shade","Jemur di tempat teduh"]];
+const S = 640, NC = 28;
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+$("ref").innerHTML = KELAS.map((k, i) => `<tr><td>${i + 1}</td><td>${esc(k[0])}</td><td>${esc(k[1])}</td></tr>`).join("");
+
+let session = null, lastImg = null, lastDets = [];
+const setStatus = (t, p) => { $("status").textContent = t; if (p != null) $("bar").style.width = (p * 100) + "%"; };
+
+async function fetchProgress(url, w0, w1) {
+  const r = await fetch(url); if (!r.ok) throw new Error(url + " " + r.status);
+  const total = +r.headers.get("content-length") || 0;
+  if (!r.body || !total) return new Uint8Array(await r.arrayBuffer());
+  const rd = r.body.getReader(), parts = []; let got = 0;
+  for (;;) { const { done, value } = await rd.read(); if (done) break; parts.push(value); got += value.length; setStatus("Memuat model…", w0 + (w1 - w0) * got / total); }
+  const out = new Uint8Array(got); let o = 0; for (const p of parts) { out.set(p, o); o += p.length; } return out;
+}
+
+async function init() {
+  try {
+    const base = new URL(".", location.href).href;
+    ort.env.wasm.numThreads = 1; ort.env.wasm.proxy = false;
+    ort.env.wasm.wasmPaths = { mjs: base + "ort-wasm-simd-threaded.mjs", wasm: base + "ort-wasm-simd-threaded.wasm" };
+    ort.env.wasm.wasmBinary = (await fetchProgress("ort-wasm-simd-threaded.wasm", 0, .5)).buffer;
+    const model = await fetchProgress("best.onnx", .5, .95);
+    session = await ort.InferenceSession.create(model, { executionProviders: ["wasm"] });
+    setStatus("Model siap. Ambil foto label.", 1);
+    for (const b of ["camBtn", "galBtn"]) $(b).setAttribute("aria-disabled", "false");
+  } catch (e) { setStatus("Model gagal dimuat: " + e.message, 0); console.error(e); }
+}
+
+function iou(a, b) {
+  const x1 = Math.max(a.x1, b.x1), y1 = Math.max(a.y1, b.y1), x2 = Math.min(a.x2, b.x2), y2 = Math.min(a.y2, b.y2);
+  const i = Math.max(0, x2 - x1) * Math.max(0, y2 - y1);
+  return i / ((a.x2 - a.x1) * (a.y2 - a.y1) + (b.x2 - b.x1) * (b.y2 - b.y1) - i + 1e-9);
+}
+
+async function detect(img) {
+  const r = Math.min(S / img.width, S / img.height), nw = Math.round(img.width * r), nh = Math.round(img.height * r);
+  const px = (S - nw) / 2, py = (S - nh) / 2;
+  const c = document.createElement("canvas"); c.width = c.height = S;
+  const g = c.getContext("2d"); g.fillStyle = "rgb(114,114,114)"; g.fillRect(0, 0, S, S);
+  g.drawImage(img, px, py, nw, nh);
+  const d = g.getImageData(0, 0, S, S).data, t = new Float32Array(3 * S * S), A = S * S;
+  for (let i = 0; i < A; i++) { t[i] = d[i * 4] / 255; t[A + i] = d[i * 4 + 1] / 255; t[2 * A + i] = d[i * 4 + 2] / 255; }
+  const out = await session.run({ [session.inputNames[0]]: new ort.Tensor("float32", t, [1, 3, S, S]) });
+  const o = out[session.outputNames[0]], N = o.dims[2], v = o.data, cand = [];
+  for (let j = 0; j < N; j++) {
+    let best = 0, bc = -1;
+    for (let k = 0; k < NC; k++) { const s = v[(4 + k) * N + j]; if (s > best) { best = s; bc = k; } }
+    if (best < 0.1) continue;
+    const cx = v[j], cy = v[N + j], w = v[2 * N + j], h = v[3 * N + j];
+    cand.push({ c: bc, s: best, x1: (cx - w / 2 - px) / r, y1: (cy - h / 2 - py) / r, x2: (cx + w / 2 - px) / r, y2: (cy + h / 2 - py) / r });
+  }
+  cand.sort((a, b) => b.s - a.s);
+  const keep = [];
+  for (const a of cand) if (!keep.some(b => b.c === a.c && iou(a, b) > 0.5) && !keep.some(b => iou(a, b) > 0.8)) keep.push(a);
+  return keep;
+}
+
+function draw() {
+  if (!lastImg) return;
+  const thr = +$("thr").value, cv = $("cv"), g = cv.getContext("2d");
+  const sc = Math.min(1, 1600 / Math.max(lastImg.width, lastImg.height));
+  cv.width = Math.round(lastImg.width * sc); cv.height = Math.round(lastImg.height * sc);
+  g.drawImage(lastImg, 0, 0, cv.width, cv.height);
+  const dets = lastDets.filter(d => d.s >= thr).sort((a, b) => a.x1 - b.x1);
+  const lw = Math.max(3, cv.width / 220), fs = Math.max(16, cv.width / 34);
+  g.font = `700 ${fs}px "Barlow Condensed", sans-serif`; g.textBaseline = "top";
+  for (const d of dets) {
+    const x = d.x1 * sc, y = d.y1 * sc, w = (d.x2 - d.x1) * sc, h = (d.y2 - d.y1) * sc;
+    g.strokeStyle = "#ff7a1a"; g.lineWidth = lw; g.strokeRect(x, y, w, h);
+    const lab = String(d.c + 1), tw = g.measureText(lab).width + fs * .5;
+    const ty = y - fs * 1.15 < 0 ? y + h : y - fs * 1.15;
+    g.fillStyle = "#ff7a1a"; g.fillRect(x, ty, tw, fs * 1.15); g.fillStyle = "#16181b"; g.fillText(lab, x + fs * .25, ty + fs * .08);
+  }
+  const seen = new Map(); for (const d of dets) if (!seen.has(d.c) || seen.get(d.c).s < d.s) seen.set(d.c, d);
+  const rows = [...seen.values()].sort((a, b) => a.x1 - b.x1);
+  $("res").innerHTML = rows.length ? rows.map(d => `<li><div class="num">${d.c + 1}</div><div><b>${esc(KELAS[d.c][0])}</b><span>${esc(KELAS[d.c][1])}</span></div><div class="conf">${Math.round(d.s * 100)}%</div></li>`).join("")
+    : `<li class="none" style="display:block">Tidak ada simbol di atas ambang ${Math.round(thr * 100)}%. Coba foto lebih dekat, fokus, dan cahaya cukup, atau turunkan ambangnya.</li>`;
+}
+
+async function onFile(e) {
+  const f = e.target.files && e.target.files[0]; e.target.value = "";
+  if (!f || !session) return;
+  setStatus("Membaca simbol…");
+  try {
+    const img = await createImageBitmap(f, { imageOrientation: "from-image" });
+    const t0 = performance.now();
+    lastDets = await detect(img); lastImg = img;
+    $("empty").hidden = true; $("cv").hidden = false; draw();
+    setStatus(`Selesai dalam ${Math.round(performance.now() - t0)} ms.`);
+  } catch (err) { setStatus("Gagal memproses gambar: " + err.message); console.error(err); }
+}
+$("cam").addEventListener("change", onFile); $("gal").addEventListener("change", onFile);
+$("thr").addEventListener("input", () => { $("thrv").textContent = Math.round($("thr").value * 100) + "%"; draw(); });
+init();
+}
+</script>
+</body>
+</html>
