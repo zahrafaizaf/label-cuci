@@ -172,7 +172,7 @@ td:first-child{font-weight:800;width:3em;color:#ffc2d6}
       <div class="copy">
         <svg class="burst" viewBox="0 0 60 50" aria-hidden="true" fill="none" stroke="#ff8a4c" stroke-width="4" stroke-linecap="round"><path d="M10 40 4 28M26 30l2-24M42 38l14-16"/></svg>
         <h1>Baca<br>Label Cuci</h1>
-        <p class="lead">Foto label perawatan di baju, nanti simbolnya ditandai dan dijelaskan cara mencucinya. Model YOLO11n berjalan langsung di HP kamu, fotonya tidak diunggah ke mana pun.</p>
+        <p class="lead">Arahkan kamera ke label cuci di bajumu, dan simbolnya langsung dibacakan artinya. Fotomu tidak dikirim ke mana pun karena semuanya diproses di perangkatmu.</p>
         <svg class="squig" viewBox="0 0 100 16" aria-hidden="true" fill="none" stroke="#ff7a5c" stroke-width="4" stroke-linecap="round"><path d="M4 10q8-8 16 0t16 0 16 0 16 0 16 0 12 0"/></svg>
 
         <!-- label baju dengan simbol -->
@@ -231,7 +231,7 @@ td:first-child{font-weight:800;width:3em;color:#ffc2d6}
           </label>
         </div>
         <div class="slider"><label for="thr">Ambang yakin</label><input type="range" id="thr" min="0.1" max="0.9" step="0.05" value="0.3"><output id="thrv">30%</output></div>
-        <div class="status" id="status">Memuat model… (tombol aktif setelah selesai)</div>
+        <div class="status" id="status">Mohon ditunggu, model sedang dimuat… (tombol aktif setelah selesai)</div>
         <div class="bar"><i id="bar"></i></div>
       </section>
     </div>
@@ -317,7 +317,7 @@ async function fetchProgress(url, w0, w1) {
   const total = +r.headers.get("content-length") || 0;
   if (!r.body || !total) return new Uint8Array(await r.arrayBuffer());
   const rd = r.body.getReader(), parts = []; let got = 0;
-  for (;;) { const { done, value } = await rd.read(); if (done) break; parts.push(value); got += value.length; const f = w0 + (w1 - w0) * got / total; setStatus(`Memuat model… ${Math.round(f * 100)}% (tombol aktif setelah selesai)`, f); }
+  for (;;) { const { done, value } = await rd.read(); if (done) break; parts.push(value); got += value.length; const f = w0 + (w1 - w0) * Math.min(1, got / total); setStatus(`Mohon ditunggu, model sedang dimuat… ${Math.round(f * 100)}%`, f); }
   const out = new Uint8Array(got); let o = 0; for (const p of parts) { out.set(p, o); o += p.length; } return out;
 }
 
